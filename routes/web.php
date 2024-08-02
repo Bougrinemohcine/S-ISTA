@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\GererEmploi;
 use App\Http\Controllers\stagiaireController;
 
     use Illuminate\Support\Facades\Route;
@@ -92,6 +93,9 @@ use App\Http\Controllers\stagiaireController;
         Route::get('/EmploiSricture', [EmploiStricture::class, 'index'])->name('EmploiSricture');
         Route::post('/Emplois-Stracture', [EmploiStricture::class, 'create']);
         Route::get('/Emplois-Stracture', [EmploiStricture::class, 'getdata']);
+
+        Route::get('/GererEmploi', [GererEmploi::class, 'index'])->name('GererEmploi');
+
         // end Model Setting
         // For Accueil page
         Route::get('dashboardAdmin', function () {
