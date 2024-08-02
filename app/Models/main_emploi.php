@@ -15,5 +15,6 @@ class main_emploi extends Model
         'datestart',
         'dateend',
         'establishment_id',
+        'confirmer'
     ];
 }

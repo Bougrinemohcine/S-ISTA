@@ -95,6 +95,7 @@ use App\Http\Controllers\stagiaireController;
         Route::get('/Emplois-Stracture', [EmploiStricture::class, 'getdata']);
 
         Route::get('/GererEmploi', [GererEmploi::class, 'index'])->name('GererEmploi');
+        Route::post('/activationEmploi/{id}', [GererEmploi::class, 'activationEmploi'])->name('activationEmploi');
 
         // end Model Setting
         // For Accueil page

@@ -23,16 +23,23 @@
                     </thead>
                     <tbody>
                         @if($emplois)
-                        @foreach ($emplois as $key => $emploi )
-                        <tr>
-                            <th scope="row">{{ $key + 1 }}</th>
-                            <td>{{ $emploi['datestart'] }}</td>
-                            <td>{{ $emploi['dateend'] }}</td>
-                            <td style="display: flex ;overflow: hidden ;">
-                                <button class="btn btn-primary EditButton">Modifier</button>
-                            </td>
-                        </tr>
-                        @endforeach
+                            @foreach ($emplois->reverse() as $key => $emploi)
+                                <tr>
+                                    <th scope="row">{{ $key + 1 }}</th>
+                                    <td>{{ $emploi['datestart'] }}</td>
+                                    <td>{{ $emploi['dateend'] }}</td>
+                                    <td style="display: flex; overflow: hidden;">
+                                        <form style="margin-left:20px" action="{{ route('activationEmploi', $emploi['id']) }}" method="POST">
+                                            @csrf
+                                            @if ($emploi['confirmer'] == 0)
+                                                <button class="btn btn-success EditButton">Activer</button>
+                                            @else
+                                                <button class="btn btn-danger EditButton">Desactiver</button>
+                                            @endif
+                                        </form>
+                                    </td>
+                                </tr>
+                            @endforeach
                         @endif
                     </tbody>
                 </table>

@@ -116,13 +116,14 @@ class auth_controller extends Controller
                 $request->session()->regenerate();
                 // store id in session
                 session(['user_id' => $user->id, 'establishment_id' => $user->establishment_id]);
-                
-                $lastEmploiCreated = main_emploi::where('establishment_id', $user->establishment_id)
-                ->latest()
-                ->first();
-                if (!empty($lastEmploiCreated)) {
-                    session(['id_main_emploi' => $lastEmploiCreated->id]);
-                }
+
+                // $lastEmploiCreated = main_emploi::where('establishment_id', $user->establishment_id)
+                // ->where('confirmer',1)
+                // ->latest()
+                // ->first();
+                // if (!empty($lastEmploiCreated)) {
+                //     session(['id_main_emploi' => $lastEmploiCreated->id]);
+                // }
 
                 return redirect('/dashboardStagiare');
         }
