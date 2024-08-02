@@ -92,6 +92,8 @@
                     <tr>
                         <th scope="col">#</th>
                         <th scope="col">Groupe</th>
+                        <th scope="col">Matricule</th>
+                        <th scope="col">Mot de passe</th>
                         <th scope="col">Code Filiére</th>
                         <th colspan="">Filière</th>
                         <th scope="col">Niveau</th>
@@ -104,6 +106,20 @@
                     <tr>
                         <th scope="row">{{ $key + 1 }}</th>
                         <td>{{ $group['group_name'] }}</td>
+                        <td>
+                            @foreach ($stagiaire as $stg)
+                                @if ($stg->id == (session()->get('establishment_id').$group['group_name']))
+                                    {{$stg->id}}
+                                @endif
+                            @endforeach
+                        </td>
+                        <td>
+                            @foreach ($stagiaire as $stg)
+                                @if ($stg->id == (session()->get('establishment_id').$group['group_name']))
+                                    {{$stg->id}}
+                                @endif
+                            @endforeach
+                        </td>
                         <td>{{ preg_replace('/^\d+/' , "" ,$group['branch_id'])}}</td>
                         <td>{{ $group['branch'] }}</td>
                         <td>{{ $group['year'] }}</td>

@@ -1,4 +1,9 @@
 <x-HeaderMenuStagiaire>
+    @php
+        $daysOfWeek = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+        $daysPart = ["Matin", "Amidi"];
+        $seancesPart = ["SE1", "SE2", "SE3", "SE4"];
+    @endphp
     <div>
         <style>
              .Mon{
@@ -103,7 +108,7 @@
                             </h4>
                         @endif
                  </div>
-                <div  class="tableContainer">
+                {{-- <div  class="tableContainer">
                     <table id="test_table"  class="col-md-12 ">
                         <thead>
                             <tr class="day">
@@ -208,7 +213,103 @@
                             @endif
                         </tbody>
                     </table>
+                </div> --}}
 
+                <div class="tableContainer">
+                    <table>
+                        <style>
+
+                            #SearchInput{
+                                        width: 45% !important;
+                                    }
+
+                                    @media screen and (max-width: 600px){
+                                        #SearchInput{
+                                        width: 100% !important;
+                                    }
+                                    }
+                            </style>
+                            <thead>
+                                <tr>
+                                    <th style="width: 80px !important;" >Jours</th>
+                                    <th style="width: 120px !important;">SE1</th>
+                                    <th style="width: 120px !important;">SE2</th>
+                                    <th style="width: 120px !important;">SE3</th>
+                                    <th style="width: 120px !important;">SE4</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @php
+                                $days = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'];
+                                $abbreviations = ['Lundi' => 'Mon',
+                                'Mardi' => 'Tue',
+                                'Mercredi' => 'Wed',
+                                'Jeudi' => 'Thu',
+                                'Vendredi' => 'Fri',
+                                'Samedi' => 'Sat'];
+                                $sessionData = ['Formateur', 'Module', 'Salle' ,'type Séance' ,'Groupe'];
+
+
+                                @endphp
+
+                                @foreach ($days as $day)
+
+                                <tr style="border: 1px solid black" >
+
+                                    <td >{{ $day }}</td>
+
+
+                                    @foreach (['SE1', 'SE2', 'SE3', 'SE4'] as $dure)
+                                        @php
+                                            $moduleValue ;
+                                            $sessionFound = false ;
+                                            $SalleValue ;
+                                            $Sessiontype ;
+                                            $FormateurName ;
+                                        @endphp
+                                        @foreach ($sissions as $sission)
+                                            @if ($sission->day === $abbreviations[$day] && $sission->dure_sission === $dure)
+                                                @php
+                                                    $sessionFound =  true ;
+                                                    $moduleValue =   preg_replace('/^\d+/', '', $sission->module_name );
+                                                    $SalleValue =    $sission->class_name    ;
+                                                    $typeSalle =     $sission->typeSalle     ;
+                                                    $SessionType =   $sission->sission_type  ;
+                                                    $FormateurName = $sission->user_name     ;
+                                                @endphp
+                                            @endif
+                                        @endforeach
+                                        @if ($sessionFound)
+                                        <td>
+
+                                                      <span>  {{$FormateurName}}</span>
+                                                         <span>{{  $moduleValue }}</span>
+                                                  <span>  {{ $SalleValue . "\n" . $typeSalle }}</span>
+
+
+                                                      <span>  {{$SessionType}}</span>
+
+
+                                        </td>
+                                        @else
+                                        <td></td>
+                                        @endif
+
+
+                                    </td>
+
+                                    @endforeach
+                                </tr>
+
+
+
+                                @endforeach
+
+
+
+                            </tbody>
+
+                    </table>
                 </div>
             </div>
 

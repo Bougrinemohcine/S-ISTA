@@ -73,7 +73,7 @@ class AddFormateur extends Component
         $this->formateurs = Formateur::where('user_name' , 'like' ,'%'.$this->SearchValue.'%')->where('role', 'formateur')
             ->where('establishment_id', $establishment_id)
             ->get();
-
+        // dd($this->formateurs);
         $this->branchesForEashFormateur = Branch::select('branches.*')
         ->join('formateur_has_filier as FHF', 'FHF.barnch_id', '=', 'branches.id')
         ->where('FHF.formateur_id', )
@@ -241,7 +241,7 @@ class AddFormateur extends Component
                   'toast' => true,
               ]);
 
-       
+
 
       }
 

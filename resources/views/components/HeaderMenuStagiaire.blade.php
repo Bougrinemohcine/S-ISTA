@@ -327,7 +327,7 @@ $imagePath = 'assets/images/users/user.jpg';
                             <li class="menu-title">Menu</li>
 
                             <li class="Acceuil">
-                                <a class="waves-effect" href="{{ url('dashboardFormateur') }}">
+                                <a class="waves-effect" href="{{ route('dashboard_stagiaire') }}">
                                     <i class="fas fa-home"></i>
                                     <span>Acceuil</span>
                                 </a>

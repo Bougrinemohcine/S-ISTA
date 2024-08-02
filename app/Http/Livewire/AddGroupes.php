@@ -2,13 +2,15 @@
 
 namespace App\Http\Livewire;
 
-use Livewire\Component;
-use Illuminate\Support\Facades\Session;
+use App\Models\User;
 use App\Models\group;
 use App\Models\branch;
 use App\Models\module;
+use Livewire\Component;
+use App\Models\formateur;
 use App\models\group_has_module;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
 use Jantinnerezo\LivewireAlert\LivewireAlert;
 
 class AddGroupes extends Component
@@ -32,6 +34,7 @@ class AddGroupes extends Component
     public $oldGroupName ;
     public $oldyear ;
     public $oldBranch ;
+    public $stagiaire ;
 
     protected $listeners = ['componentRefreshed' => '$refresh' , 'GetIdGroupe' => 'GetIdGroupe' ,'updateGroup'=>'$refresh'];
     public function FNrefresh(){
@@ -204,6 +207,9 @@ public function create()
              $this->oldGroupName = $group->group_name;
              $this->oldyear = $group->year;
         }
+
+        $this->stagiaire = formateur::where('role','stagiaire')->where('establishment_id', session()->get('establishment_id'))->get();
+        // dd($this->stagiaire);
         // end set data on Edit Modules
         return view('livewire.add-groupes');
     }

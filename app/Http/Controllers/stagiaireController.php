@@ -34,6 +34,7 @@ class stagiaireController extends Controller
         ->where('sissions.establishment_id', $establishment_id)
         ->where('sissions.status_sission', 'Accepted')
         ->where('sissions.main_emploi_id', session()->get('id_main_emploi'))
+        ->where('group_id',session()->get('user_id'))
         ->get();
 
         return view('stagiaireDashboard.Home.stagiaire',compact('tableEmploi','dataEmploi','groups','salles','sissions'));
