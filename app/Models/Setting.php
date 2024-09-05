@@ -9,7 +9,7 @@ class Setting extends Model
 {
     use HasFactory;
 
-    public $table = 'usersetting';
+    public $table = 'userSetting';
     public $timestamps = false ;
     protected $primaryKey = 'userId';
     public $fillable = ['userId',	'module',

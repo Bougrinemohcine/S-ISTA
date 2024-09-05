@@ -63,6 +63,16 @@ public function create()
             'establishment_id' => $establishment
         ]);
 
+        if($group) {
+            User::create([
+                'password'=>bcrypt($establishment .$groupNameWithoutSpaces),
+                'role'=>'stagiaire',
+                'user_name'=> $groupNameWithoutSpaces,
+                'establishment_id'=>$establishment,
+                'id'=>$establishment.$groupNameWithoutSpaces['code']
+            ]);
+        }
+        
         $modules = $this->selectedModules;
         if ($group && $modules) {
             foreach ($modules as $module) {
