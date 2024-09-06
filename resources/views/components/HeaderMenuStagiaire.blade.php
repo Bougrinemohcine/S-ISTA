@@ -333,41 +333,6 @@ $imagePath = 'assets/images/users/user.jpg';
                                 </a>
                             </li>
 
-                            <li class="RequestCalendar">
-                                <a href="{{ url('DemanderEmploi') }}" class="waves-effect">
-                                    <i class="mdi mdi-frequently-asked-questions"></i>
-                                    <span>RequestCalendar</span>
-                                </a>
-                            </li>
-
-                            <li class="Calendar">
-                                <a href="{{ url('TousLesSeances') }}" class="waves-effect">
-                                    <i class="mdi mdi-calendar-text"></i>
-                                    <span>Calendar</span>
-                                </a>
-                            </li>
-                            <li class="Groupes">
-                                <a href="{{ url('FormateurGroupeList') }}" class="waves-effect">
-                                    <i class="mdi mdi-account-group"></i>
-                                    <span>List des Groupes</span>
-                                </a>
-                            </li>
-                            <li class="Modules">
-                                <a href="{{ url('FormateurModuleList') }}" class="waves-effect">
-                                    <i class="mdi mdi-inbox-full"></i>
-                                    <span>List des Modules</span>
-                                </a>
-                            </li>
-
-
-
-
-
-                            <li class="Settings">
-                                <a class="dropdown-item d-block" href="{{ url('settingsFormateur') }}">
-                                    <i class="mdi mdi-settings-outline"></i> Settings
-                                </a>
-                            </li>
                             <li class="Documentation">
                                 <a href="javascript: void(0);" class="has-arrow waves-effect"
                                     aria-expanded="false">
@@ -601,55 +566,9 @@ $imagePath = 'assets/images/users/user.jpg';
                         }
                     },
                     // Douzième étape
-                    {
-                        element: '.RequestCalendar ',
-                        popover: {
-                            title: 'Calendrier des Demandes',
-                            description: 'Ceci est le calendrier des demandes.',
-                            side: "left",
-                            align: 'start'
-                        }
-                    },
-                    // Treizième étape
-                    {
-                        element: '.Calendar ',
-                        popover: {
-                            title: 'Calendrier',
-                            description: 'Ceci est le calendrier.',
-                            side: "left",
-                            align: 'start'
-                        }
-                    },
-                    // Quatorzième étape
-                    {
-                        element: '.Groupes ',
-                        popover: {
-                            title: 'Groupes',
-                            description: 'Ceci sont les groupes.',
-                            side: "left",
-                            align: 'start'
-                        }
-                    },
-                    // Quinzième étape
-                    {
-                        element: '.Modules ',
-                        popover: {
-                            title: 'Modules',
-                            description: 'Ceci sont les modules.',
-                            side: "left",
-                            align: 'start'
-                        }
-                    },
-                    // Seizième étape
-                    {
-                        element: '.Settings ',
-                        popover: {
-                            title: 'Paramètres',
-                            description: 'Ceci sont les paramètres.',
-                            side: "left",
-                            align: 'start'
-                        }
-                    },
+                    
+                    
+                    
                     // Dix-septième étape
                     {
                         element: '.Documentation ',
