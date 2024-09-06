@@ -298,8 +298,8 @@
 
 
 <div style="margin: 10px ;">
-    <button id="generate-excel"  class=" btn w-25 btn-primary mt-5">  télécharger</button>
-      <!-- Button trigger modal -->
+    <button onclick="ExportToExcel('xlsx')" class=" btn  btn-primary mt-5 w-25">télécharger</button>
+          <!-- Button trigger modal -->
 <button type="button" class="btn btn-danger mt-5 col-3" data-bs-toggle="modal" data-bs-target="#exampleModal1"> Supprimer tout</button>
 </div>
   <!-- Modal for delete-->
@@ -322,31 +322,16 @@
   </div>
 
 
-  {{-- <script type="text/javascript" src="https://unpkg.com/xlsx@0.15.1/dist/xlsx.full.min.js"></script> --}}
+  <script type="text/javascript" src="https://unpkg.com/xlsx@0.15.1/dist/xlsx.full.min.js"></script>
   <script type="text/javascript" >
 
-//   function ExportToExcel(type, fn, dl) {
-//          var elt = document.getElementById('tbl_exporttable_to_xls');
-//          var wb = XLSX.utils.table_to_book(elt, { sheet: "sheet1" });
-//          return dl ?
-//            XLSX.write(wb, { bookType: type, bookSST: true, type: 'base64' }):
-//            XLSX.writeFile(wb, fn || ('Schedule.' + (type || 'xlsx')));
-//       }
-
-
-         $("document").ready(function () {
-        excel = new ExcelGen({
-
-            "src_id" : "test_table",
-            "show_header" : "true"
-
-        });
-
-        $("#generate-excel").click(function () {
-            excel.generate();
-        });
-    });
-
+function ExportToExcel(type, fn, dl) {
+         var elt = document.getElementById('test_table');
+         var wb = XLSX.utils.table_to_book(elt, { sheet: "sheet1" });
+         return dl ?
+           XLSX.write(wb, { bookType: type, bookSST: true, type: 'base64' }):
+           XLSX.writeFile(wb, fn || ('EmploiTousLesGroupes.' + (type || 'xlsx')));
+      }
 
 
   document.addEventListener('livewire:load', function () {

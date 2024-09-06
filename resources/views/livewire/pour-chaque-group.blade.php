@@ -396,8 +396,8 @@
 
     </div>
 
-    <button onclick="ExportToExcel('xlsx')" class=" btn  btn-primary mt-5">télécharger</button>
-      <!-- Button trigger modal -->
+    <button onclick="exportTableToExcel('tbl_exporttable_to_xls')" class=" btn  btn-primary mt-5">Export to Excel</button>
+    <!-- Button trigger modal -->
       <button type="button" class="btn btn-danger mt-5 col-3" data-bs-toggle="modal" data-bs-target="#exampleModal111">
         Supprimer tout
     </button>
@@ -423,16 +423,27 @@
 </div>
 
   {{-- end Modal for delete  --}}
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.2/xlsx.full.min.js"></script>
+
   <script type="text/javascript" src="https://unpkg.com/xlsx@0.15.1/dist/xlsx.full.min.js"></script>
   <script type="text/javascript" >
 
-  function ExportToExcel(type, fn, dl) {
-         var elt = document.getElementById('tbl_exporttable_to_xls');
-         var wb = XLSX.utils.table_to_book(elt, { sheet: "sheet1" });
-         return dl ?
-           XLSX.write(wb, { bookType: type, bookSST: true, type: 'base64' }):
-           XLSX.writeFile(wb, fn || ('Schedule.' + (type || 'xlsx')));
-      }
+    function exportTableToExcel(tableID, filename = 'table_export.xlsx') {
+    // Get the table element
+    var table = document.getElementById(tableID);
+    
+    // Create a new Workbook
+    var wb = XLSX.utils.book_new();
+
+    // Convert the HTML table to a worksheet
+    var ws = XLSX.utils.table_to_sheet(table);
+
+    // Append the worksheet to the workbook
+    XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+
+    // Export the workbook to a file
+    XLSX.writeFile(wb, filename);
+  }
 
 
   document.addEventListener('livewire:load', function () {
