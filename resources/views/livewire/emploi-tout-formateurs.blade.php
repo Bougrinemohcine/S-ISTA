@@ -91,7 +91,7 @@
 
 
         #SearchInputContainer{
-            display: block ;
+            display: flex ;
             max-width: 340px !important;
             position: absolute ;
             z-index: 10000001;
@@ -170,7 +170,14 @@
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
+
                     <input wire:model='SearchValue'  type="search" class="form-control rounded " placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
+                    <select id='date-select' class="form-select"  wire:model="selectedValue" wire:change="updateSelectedIDEmploi($event.target.value)">
+                        <option >Select date emploi</option>
+                        @forEach( $Main_emplois as $Main_emploi)
+                            <option value="{{ $Main_emploi->id }}">{{$Main_emploi->datestart  }} to {{$Main_emploi->dateend }}</option>
+                        @endforeach
+                    </select>
                 </div>
                 <div class="modal-footer">
                   <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">fermer</button>
@@ -181,8 +188,14 @@
           </div>
 
         {{-- modal Search --}}
-        <div id="SearchInputContainer" class=" rounded">
-            <input wire:model='SearchValue'  type="search" class="form-control rounded " placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
+        <div style="margin-left:88px" id="SearchInputContainer" class=" rounded">
+            <input wire:model='SearchValue'   type="search" class="form-control rounded " placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
+            <select id='date-select' style="width: 200px ; marign-left:2.5px;" class="form-select"  wire:model="selectedValue" wire:change="updateSelectedIDEmploi($event.target.value)">
+                <option >Select date emploi</option>
+                @forEach( $Main_emplois as $Main_emploi)
+                    <option value="{{ $Main_emploi->id }}">{{$Main_emploi->datestart  }} to {{$Main_emploi->dateend }}</option>
+                @endforeach
+            </select>
         </div>
         <div class="dateContent">
             @if ($this->checkValues[0]->modeRamadan)
@@ -212,21 +225,18 @@
         </div>
 
         <div  class="tableContainer">
-        <table id="tbl_exporttable_to_xls" style="overflow:scroll ; " class="col-md-12 ">
-
-
+        <table id="myTable" style="overflow:scroll ; " class="col-md-12 ">
               {{-- first table --}}
-
                         <thead>
-
                 <tr class="day">
-                    <th style="width: 140px !important" rowspan="4">Formateur Name</th>
+                    <th style="width: 140px !important" rowspan="3">Formateur Name</th>
                     <th colspan="4">Lundi</th>
                     <th colspan="4">Mardi</th>
                     <th colspan="4">Mercredi</th>
                     <th colspan="4">Jeudi</th>
                     <th colspan="4">Vendredi</th>
                     <th colspan="4">Samedi</th>
+                    <th style="width: 140px !important" rowspan="3">Masse Horaire</th>
                 </tr>
                 <tr>
 
@@ -278,6 +288,10 @@
                      $dayWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
                 @endphp
                @foreach ($formateurs as $formateur)
+               @php
+               $totalSessions = 0; // Initialize total sessions for each formateur
+               $sessionTracker = []; // Track sessions to avoid double counting
+           @endphp
                <tr>
                    <td>{{ $formateur->user_name }}</td>
                    @foreach ($dayWeek as $day)
@@ -289,15 +303,20 @@
                                $typeSalle ;
                                $typeValue ;
                                $ModelValue ;
-                           @endphp
+                               @endphp
                            @foreach ($sissions as $sission)
+                              
                                @if ($sission->day === $day &&
                                     $sission->user_id === $formateur->id &&
                                     $sission->day_part === substr($sessionType, 0, 5) &&
                                     $sission->dure_sission === substr($sessionType, 5))
                                    @php
                                        $foundSession = true;
-                                       $groupes[] = $sission->group_name;
+                                       if (!in_array($day.$sessionType, $sessionTracker)) {
+                                        $sessionTracker[] = $day.$sessionType; // Mark this session as counted
+                                        $totalSessions++; // Increment session count only once per time slot
+                                    }
+                                        $groupes[] = $sission->group_name;
                                        $salleValue = $sission->class_name ;
                                        $typeSalle = $sission->typeSalle ;
                                        $typeValue = $sission->sission_type ;
@@ -310,26 +329,30 @@
                                style="!important;height: 50px !important; overflow: hidden ; background-color:{{ $foundSession ? 'rgba(12, 72, 166, 0.3)' :  ''}}"
                                class="TableCases {{$day}}" id="{{ $day.$sessionType.$formateur->id }}">
                                @if ($foundSession)
-                                <span>   {{ $typeValue}}</span>
-                                <span>
-                                    @if($salleValue)
-                                        {{ $salleValue }}
-                                    @else
-                                        SALLE
-                                    @endif
-                                    <br>
-                                    {{ "\n" . $typeSalle }}
-                                </span>
+                                <span>@if($salleValue)
+                                    {{ $salleValue }}
+                                @else
+                                    SALLE
+                                @endif{{ "\n". $typeSalle .'   ' }}</span>
 
-                                <span>   {{ implode(' - ', $groupes) }}</span>
+                                <span>{{ $typeValue}}</span>
+                                <span>{{ implode(' - ', $groupes) }}</span>
                                    {{ preg_replace('/^\d/', ' ', $ModelValue) }}
                                @endif
                            </td>
                        @endforeach
                    @endforeach
+                   <td>
+                    @php
+                        $masseHoraire = $totalSessions * 2.5; // Each session = 2.5 hours
+                        echo $masseHoraire . ' h';
+                    @endphp
+                </td>
                </tr>
            @endforeach
+           {{-- @if (session()->get('idEmploiSelected') == session()->get('id_main_emploi')) --}}
            @include('livewire.FormateurModule')
+           {{-- @endif --}}
                         @endif
             </tbody>
               {{-- end first table table --}}
@@ -344,9 +367,9 @@
 </div>
 
 
-    <button onclick="ExportToExcel('xlsx')" class=" btn  btn-primary mt-5 w-25">télécharger</button>
+    <button id="exportButton" class=" btn  btn-primary mt-5 w-25">télécharger</button>
       <!-- Button trigger modal -->
-<button type="button" class="btn btn-danger mt-5 col-3" data-bs-toggle="modal" data-bs-target="#exampleModal1">   Supprimer tout </button>
+<!--<button type="button" class="btn btn-danger mt-5 col-3" data-bs-toggle="modal" data-bs-target="#exampleModal1">   Supprimer tout </button>-->
   <!-- Modal for delete-->
   <div wire:ignore class="modal fade" id="exampleModal1" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -366,16 +389,66 @@
     </div>
   </div>
 
-  <script type="text/javascript" src="https://unpkg.com/xlsx@0.15.1/dist/xlsx.full.min.js"></script>
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
   <script type="text/javascript" >
+     $(document).ready(function () {
+    $("#exportButton").click(function () {
+        var table = document.getElementById("myTable");
 
-  function ExportToExcel(type, fn, dl) {
-         var elt = document.getElementById('tbl_exporttable_to_xls');
-         var wb = XLSX.utils.table_to_book(elt, { sheet: "sheet1" });
-         return dl ?
-           XLSX.write(wb, { bookType: type, bookSST: true, type: 'base64' }):
-           XLSX.writeFile(wb, fn || ('EmploiTousLesFormateurs.' + (type || 'xlsx')));
-      }
+        // Modify the content of each cell in the HTML table to include line breaks
+        $(table).find("td").each(function() {
+            var cellContent = $(this).text();
+            // Replace spaces with line breaks
+            cellContent = cellContent.replace(/\s+/g, "\n");
+            $(this).text(cellContent);
+        });
+
+        // Convert the modified table to a workbook
+        var wb = XLSX.utils.table_to_book(table, { sheet: "Sheet1" });
+
+        // Define the row heights
+        var ws = wb.Sheets["Sheet1"];
+        var wsrows = [
+            { hpt: 25 }, { hpx: 25 }, { hpx: 25 }, { hpx: 45 },
+            { hpx: 45 }, { hpx: 45 }, { hpx: 45 }, { hpx: 45 },
+            { hpx: 45 }, { hpx: 45 }, { hpx: 45 }, { hpx: 45 },
+            { hpx: 45 }, { hpx: 45 }, { hpx: 45 }, { hpx: 45 },
+            { hpx: 45 }, { hpx: 45 }, { hpx: 45 }, { hpx: 45 },
+            { hpx: 45 }, { hpx: 45 }, { hpx: 45 }, { hpx: 45 },
+            { hpx: 45 }, { hpx: 45 }, { hpx: 45 }, { hpx: 45 },
+            { hpx: 45 }, { hpx: 45 }, { hpx: 45 }, { hpx: 45 },
+            { hpx: 45 }, { hpx: 45 }, { hpx: 45 }, { hpx: 45 },
+            { hpx: 45 }, { hpx: 45 }, { hpx: 45 }, { hpx: 45 },
+            { hpx: 45 }, { hpx: 45 }, { hpx: 45 }, { hpx: 45 },
+            { hpx: 45 }, { hpx: 45 }, { hpx: 45 }, { hpx: 45 },
+            { hpx: 45 }, { hpx: 45 }, { hpx: 45 }, { hpx: 45 },
+            { hpx: 45 }, { hpx: 45 }, { hpx: 45 }, { hpx: 45 },
+            { hpx: 45 }, { hpx: 45 }, { hpx: 45 }, { hpx: 45 },
+            { hpx: 45 }, { hpx: 45 }, { hpx: 45 }, { hpx: 45 },
+            { hpx: 45 }, { hpx: 45 }, { hpx: 45 }, { hpx: 45 },
+            { hpx: 45 }, { hpx: 45 }, { hpx: 45 }, { hpx: 45 },
+        ];
+        ws['!rows'] = wsrows;
+
+         // Define the column widths
+        var wscols = [
+            { wch: 10 },
+            {wch: 9 } ,  {wch: 9 } , {wch: 9 } , {wch: 9 } , {wch: 9 }, {wch: 9 }, {wch: 9 },
+              {wch: 9 } ,  {wch: 9 } , {wch: 9 } , {wch: 9 } , {wch: 9 }, {wch: 9 }, {wch: 9 },
+                {wch: 9 } ,  {wch: 9 } , {wch: 9 } , {wch: 9 } , {wch: 9 }, {wch: 9 }, {wch: 9 },
+                  {wch: 9 } ,  {wch: 9 } , {wch: 9 } , {wch: 9 } , {wch: 9 }, {wch: 9 }, {wch: 9 },
+                    {wch: 9 } ,  {wch: 9 } , {wch: 9 } , {wch: 9 } , {wch: 9 }, {wch: 9 }, {wch: 9 },
+                      {wch: 9 } ,  {wch: 9 } , {wch: 9 } , {wch: 9 } , {wch: 9 }, {wch: 9 }, {wch: 9 },
+        ];
+        ws['!cols'] = wscols;
+
+
+
+        // Write the workbook to a file
+        XLSX.writeFile(wb, "istabm.xlsx");
+    });
+});
+
 
 
   document.addEventListener('livewire:load', function () {
