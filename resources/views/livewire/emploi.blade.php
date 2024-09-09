@@ -47,13 +47,17 @@
         }
 
         #SearchInputContainer{
-            display: block ;
+
             max-width: 340px !important;
             position: absolute ;
             z-index: 10000001;
             top: -5.5rem ;
             left: 18rem ;
 
+        }
+
+        .ContainerInputs{
+            display: flex ;
         }
         .iconContainer {
             color: white ;
@@ -122,6 +126,12 @@
                     </div>
                     <div class="modal-body">
                         <input wire:model='SearchValue'  type="search" class="form-control rounded " placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
+                        <select id='date-select' class="form-select"  wire:model="selectedValue" wire:change="updateSelectedIDEmploi($event.target.value)">
+                            <option >Select date emploi</option>
+                            @forEach( $Main_emplois as $Main_emploi)
+                                <option value="{{ $Main_emploi->id }}">{{$Main_emploi->datestart  }} to {{$Main_emploi->dateend }}</option>
+                            @endforeach
+                        </select>
                     </div>
                     <div class="modal-footer">
                       <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">fermer</button>
@@ -132,8 +142,14 @@
               </div>
 
             {{-- modal Search --}}
-            <div id="SearchInputContainer" class=" rounded">
-                <input wire:model='SearchValue'  type="search" class="form-control rounded " placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
+            <div style="margin-left:66px ;" id="SearchInputContainer" class="ContainerInputs rounded">
+                <input wire:model='SearchValue'   type="search" class="form-control rounded " placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
+                <select id='date-select' class="form-select" style="margin-left:1.5px ;height: 100% ; width:200px"  wire:model="selectedValue" wire:change="updateSelectedIDEmploi($event.target.value)">
+                    <option >Select date emploi</option>
+                    @forEach( $Main_emplois as $Main_emploi)
+                        <option value="{{ $Main_emploi->id }}">{{$Main_emploi->datestart  }} to {{$Main_emploi->dateend }}</option>
+                    @endforeach
+                </select>
             </div>
 
             <div class="dateContent">
@@ -167,7 +183,7 @@
 
 
 
-        <table id="test_table"  class="col-md-12 ">
+        <table id="myTable"  class="col-md-12 ">
 
 
             <thead>
@@ -199,6 +215,7 @@
                   <th colspan="2">A.midi </th>
                 </tr>
                 <tr class="se-row">
+
                     <th>SE1</th>
                     <th>SE2</th>
                     <th>SE1</th>
@@ -226,7 +243,7 @@
 
                 </tr>
               </thead>
-            <tbody>
+              <tbody>
                 @if ($groups)
                 @php
                      $dayWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -308,41 +325,67 @@
 
 
 <div style="margin: 10px ;">
-    <button onclick="ExportToExcel('xlsx')" class=" btn  btn-primary mt-5 w-25">télécharger</button>
-          <!-- Button trigger modal -->
-<button type="button" class="btn btn-danger mt-5 col-3" data-bs-toggle="modal" data-bs-target="#exampleModal1"> Supprimer tout</button>
-</div>
-  <!-- Modal for delete-->
-  <div wire:ignore class="modal fade" id="exampleModal1" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h1 class="modal-title fs-5" id="exampleModalLabel">Êtes-vous sûr(e)?</h1>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-            Voulez-vous supprimer toutes les sessions que vous avez créées ?
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">fermer</button>
-          <button type="button" wire:click='deleteAllSessions' class="btn btn-danger">Oui Supprimer Tout</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-
-  <script type="text/javascript" src="https://unpkg.com/xlsx@0.15.1/dist/xlsx.full.min.js"></script>
+    <button id="exportButton"  class=" btn w-25 btn-primary mt-5">  télécharger</button>
+      <!-- Button trigger modal -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
   <script type="text/javascript" >
+     $(document).ready(function () {
+    $("#exportButton").click(function () {
+        var table = document.getElementById("myTable");
 
-function ExportToExcel(type, fn, dl) {
-         var elt = document.getElementById('test_table');
-         var wb = XLSX.utils.table_to_book(elt, { sheet: "sheet1" });
-         return dl ?
-           XLSX.write(wb, { bookType: type, bookSST: true, type: 'base64' }):
-           XLSX.writeFile(wb, fn || ('EmploiTousLesGroupes.' + (type || 'xlsx')));
-      }
+        // Modify the content of each cell in the HTML table to include line breaks
+        $(table).find("td").each(function() {
+            var cellContent = $(this).text();
+            // Replace spaces with line breaks
+            cellContent = cellContent.replace(/\s+/g, "\n");
+            $(this).text(cellContent);
+        });
 
+        // Convert the modified table to a workbook
+        var wb = XLSX.utils.table_to_book(table, { sheet: "Sheet1" });
+
+        // Define the row heights
+        var ws = wb.Sheets["Sheet1"];
+        var wsrows = [
+            { hpt: 25 }, { hpx: 25 }, { hpx: 25 }, { hpx: 45 },
+            { hpx: 45 }, { hpx: 45 }, { hpx: 45 }, { hpx: 45 },
+            { hpx: 45 }, { hpx: 45 }, { hpx: 45 }, { hpx: 45 },
+            { hpx: 45 }, { hpx: 45 }, { hpx: 45 }, { hpx: 45 },
+            { hpx: 45 }, { hpx: 45 }, { hpx: 45 }, { hpx: 45 },
+            { hpx: 45 }, { hpx: 45 }, { hpx: 45 }, { hpx: 45 },
+            { hpx: 45 }, { hpx: 45 }, { hpx: 45 }, { hpx: 45 },
+            { hpx: 45 }, { hpx: 45 }, { hpx: 45 }, { hpx: 45 },
+            { hpx: 45 }, { hpx: 45 }, { hpx: 45 }, { hpx: 45 },
+            { hpx: 45 }, { hpx: 45 }, { hpx: 45 }, { hpx: 45 },
+            { hpx: 45 }, { hpx: 45 }, { hpx: 45 }, { hpx: 45 },
+            { hpx: 45 }, { hpx: 45 }, { hpx: 45 }, { hpx: 45 },
+            { hpx: 45 }, { hpx: 45 }, { hpx: 45 }, { hpx: 45 },
+            { hpx: 45 }, { hpx: 45 }, { hpx: 45 }, { hpx: 45 },
+            { hpx: 45 }, { hpx: 45 }, { hpx: 45 }, { hpx: 45 },
+            { hpx: 45 }, { hpx: 45 }, { hpx: 45 }, { hpx: 45 },
+            { hpx: 45 }, { hpx: 45 }, { hpx: 45 }, { hpx: 45 },
+            { hpx: 45 }, { hpx: 45 }, { hpx: 45 }, { hpx: 45 },
+        ];
+        ws['!rows'] = wsrows;
+
+         // Define the column widths
+        var wscols = [
+            { wch: 10 },
+            {wch: 9 } ,  {wch: 9 } , {wch: 9 } , {wch: 9 } , {wch: 9 }, {wch: 9 }, {wch: 9 },
+              {wch: 9 } ,  {wch: 9 } , {wch: 9 } , {wch: 9 } , {wch: 9 }, {wch: 9 }, {wch: 9 },
+                {wch: 9 } ,  {wch: 9 } , {wch: 9 } , {wch: 9 } , {wch: 9 }, {wch: 9 }, {wch: 9 },
+                  {wch: 9 } ,  {wch: 9 } , {wch: 9 } , {wch: 9 } , {wch: 9 }, {wch: 9 }, {wch: 9 },
+                    {wch: 9 } ,  {wch: 9 } , {wch: 9 } , {wch: 9 } , {wch: 9 }, {wch: 9 }, {wch: 9 },
+                      {wch: 9 } ,  {wch: 9 } , {wch: 9 } , {wch: 9 } , {wch: 9 }, {wch: 9 }, {wch: 9 },
+        ];
+        ws['!cols'] = wscols;
+
+
+
+        // Write the workbook to a file
+        XLSX.writeFile(wb, "istabm.xlsx");
+    });
+});
 
   document.addEventListener('livewire:load', function () {
   const selectElement = document.getElementById('date-select');

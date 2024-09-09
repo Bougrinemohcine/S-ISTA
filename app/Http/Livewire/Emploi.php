@@ -110,22 +110,6 @@ class Emploi extends Component
                 'group_id' => $group_id,
                 'dure_sission' => $dure_sission,
             ])->first();
-            // $sessionData = [
-            //     'day' => $day,
-            //     'day_part' => $day_part ,
-            //     'dure_sission' => $dure_sission ,
-            //     'establishment_id' => session()->get('establishment_id'),
-            //     'class_room_id' => $this->salle,
-            //     'main_emploi_id' => session()->get('id_main_emploi') ,
-            //     'demand_emploi_id' => null,
-            //     'message' => null,
-            //     'sission_type' => $this->TypeSesion,
-            //     'status_sission' => 'Accepted',
-            //     'typeSalle'=>$this->salleclassTyp,
-            //     'user_id'=> $this->formateur,
-            //     'group_id'=> $group_id
-            // ];
-
 
             $sessionData = [
                 'day' => $day,
