@@ -18,7 +18,7 @@ class moduleController extends Controller
         $establishment  = session()->get('establishment_id');
         $modules = module::all()->where('establishment_id', $establishment );
         // dd($modules);
-        return view('adminDashboard.addmodule.add_module' ,['modules'=>$modules]);
+        return view('adminDashboard.addModule.add_module' ,['modules'=>$modules]);
     }
 
     /**
@@ -62,7 +62,7 @@ class moduleController extends Controller
     public function display_update_page($id)
     {
         $module = module::find($id);
-        return view('adminDashboard.addmodule.update_module',['module'=>$module]);
+        return view('adminDashboard.addModule.update_module',['module'=>$module]);
     }
 
     /**

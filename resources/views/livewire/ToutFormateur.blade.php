@@ -187,7 +187,12 @@
                                 @elseif ($item === 'Module')
                                     {{ $moduleValue }}
                                 @elseif ($item === 'Salle')
-                                {{ $SalleValue ."\n" . $typeSalle}}
+                                @if($SalleValue)
+                                    {{ $SalleValue }}
+                                @else
+                                    SALLE
+                                @endif
+                                {{ "\n" . $typeSalle}}
                                 @elseif ($item === 'type Séance')
                                     {{ $typeValue }}
 

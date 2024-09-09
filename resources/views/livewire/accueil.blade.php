@@ -12,7 +12,7 @@
         }
     </style>
 
-<div wire:ignore.self class="Container-create-emploi">
+<div wire:ignore.self class="Container-create-emploi mt-3 mx-3">
     <div class="card text-center">
         <div class="card-header">
           Crée un emploi

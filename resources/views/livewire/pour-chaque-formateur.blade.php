@@ -59,12 +59,12 @@
         }
 
         .selectDiv{
+            display: flex ;
             width: 70vw !important;
             margin-left:0px !important ;
         }
 
     }
-
     .dateContent{
 
             max-width: 90vw ;
@@ -107,7 +107,8 @@
         /* New code  */
         #SearchInputContainer{
             display: flex ;
-            max-width: 340px !important;
+            max-width: 480px !important;
+            height: 35px !important;
             position: absolute ;
             z-index: 10000001;
             top: -5.5rem ;
@@ -142,11 +143,6 @@
 
     </style>
 
-
-    @php
-
-@endphp
-
 <div class=" iconContainer rounded">
     <div class="mdi mdi-magnify-remove-outline tbn" data-bs-toggle="modal" data-bs-target="#exampleModal333"></div>
 </div>
@@ -161,13 +157,21 @@
         </div>
         <div class="modal-body">
             <input id='searchInput12'   type="search" class="form-control rounded searchDev " placeholder="Search Formateur" aria-label="Search" aria-describedby="search-addon" />
-
             <select  style="box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;" wire:model="formateurId" id="selectOptions12" class="form-control " name="">
                 <option >Formateurs</option>
                 @foreach ($formateurs as $formateur)
                    <option class="form-control"  value="{{$formateur->id}}">{{$formateur->user_name}} </option>
                 @endforeach
             </select>
+
+        {{-- select date --}}
+        <select id='date-select' class="form-select"  wire:model="selectedValue" wire:change="updateSelectedIDEmploi($event.target.value)">
+            <option >Select date emploi</option>
+            @forEach( $Main_emplois as $Main_emploi)
+                <option value="{{ $Main_emploi->id }}">{{$Main_emploi->datestart  }} to {{$Main_emploi->dateend }}</option>
+            @endforeach
+        </select>
+        {{-- end select date --}}
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">fermer</button>
@@ -178,27 +182,29 @@
   </div>
 
 {{-- modal Search --}}
-<div id="SearchInputContainer" class=" rounded">
-    <input id='searchInput'   type="search" class="form-control rounded searchDev hide " placeholder="Search Formateur" aria-label="Search" aria-describedby="search-addon" />
 
-<div class="selectDiv" style="width:360px ;margin-left: 15px">
+<div  style="margin-left:86px" id="SearchInputContainer" class="rounded">
+    <input id='searchInput' style="height:100%"  type="search" class="form-control rounded searchDev hide " placeholder="Search Formateur" aria-label="Search" aria-describedby="search-addon" />
+
 <select  style="box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;" wire:model="formateurId" id="selectOptions" class="form-control hide" name="">
     <option >Formateurs</option>
     @foreach ($formateurs as $formateur)
        <option class="form-control"  value="{{$formateur->id}}">{{$formateur->user_name}} </option>
     @endforeach
 </select>
-</div>
+{{-- select date --}}
+<select id='date-select' style="width: 200px"  class="form-select"  wire:model="selectedValue" wire:change="updateSelectedIDEmploi($event.target.value)">
+    <option >Select date emploi</option>
+    @forEach( $Main_emplois as $Main_emploi)
+        <option value="{{ $Main_emploi->id }}">{{$Main_emploi->datestart  }} to {{$Main_emploi->dateend }}</option>
+    @endforeach
+</select>
+{{-- end select date --}}
 </div>
 <br>
 <br>
     <div class="table-responsive">
-
-
-
-
-        <table  id="tbl_exporttable_to_xls" style="overflow:scroll ;" class="col-md-12 ">
-
+        <table  id="myTable" style="overflow:scroll ;" class="col-md-12 ">
             <div class="dateContent">
                 @if ($this->checkValues[0]->modeRamadan)
                 <h4 style="marign-top:15px "  class="dateSE">
@@ -207,9 +213,6 @@
                 @else
                 <h4 class="dateSE"> SE1 = 08:30 - 11:20 SE2 = 11:30 - 13:30 SE3 = 13:30 - 16:20 SE4 = 16:30 - 18:30 </h4>
                 @endif
-
-
-
                     @if (!$dataEmploi->isEmpty())
                     <h4 style="float: right; ">
                         @foreach ($dataEmploi as $item)
@@ -319,15 +322,11 @@
                         @if ($sessionFound)
                           <span>  {{$formateur}}</span>
                           <span>  {{ implode(' - ', $groupes) }}</span>
-                          <span>
-                            @if($SalleValue)
-                                {{ $SalleValue }}
-                            @else
-                                SALLE
-                            @endif
-                            <br>
-                            {{ "\n" . $typeSalle }}
-                        </span>
+                          <span>   @if($SalleValue)
+                            {{ $SalleValue }}
+                        @else
+                            SALLE
+                        @endif{{"\n" . $typeSalle}}</span>
                          <span>   {{$Typevalue}}</span>
                           <span>  {{$ModuleValue}}</span>
                         @endif
@@ -344,11 +343,16 @@
 @else
         @include('livewire.PourFormateur1')
 @endif
-        @include('livewire.FormateurModule')
+{{-- Model OPAPE --}}
+{{-- @if (session()->get('id_main_emploi')) --}}
+
+    @include('livewire.FormateurModule')
+{{-- @endif --}}
+
         </table>
     </div>
 
-    <button onclick="ExportToExcel('xlsx')" class=" btn  btn-primary mt-5"> télécharger</button>
+    <button id="exportButton" class=" btn  btn-primary mt-5"> télécharger</button>
       <!-- Button trigger modal -->
 <button type="button" class="btn btn-danger mt-5 col-3" data-bs-toggle="modal" data-bs-target="#exampleModal1">
     Supprimer tout
@@ -373,16 +377,65 @@
   </div>
   {{-- end Modal for delete  --}}
 
-  <script type="text/javascript" src="https://unpkg.com/xlsx@0.15.1/dist/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
   <script type="text/javascript" >
+     $(document).ready(function () {
+    $("#exportButton").click(function () {
+        var table = document.getElementById("myTable");
 
-  function ExportToExcel(type, fn, dl) {
-         var elt = document.getElementById('tbl_exporttable_to_xls');
-         var wb = XLSX.utils.table_to_book(elt, { sheet: "sheet1" });
-         return dl ?
-           XLSX.write(wb, { bookType: type, bookSST: true, type: 'base64' }):
-           XLSX.writeFile(wb, fn || ('EmploiChaqueFormateur.' + (type || 'xlsx')));
-      }
+        // Modify the content of each cell in the HTML table to include line breaks
+        $(table).find("td").each(function() {
+            var cellContent = $(this).text();
+            // Replace spaces with line breaks
+            cellContent = cellContent.replace(/\s+/g, "\n");
+            $(this).text(cellContent);
+        });
+
+        // Convert the modified table to a workbook
+        var wb = XLSX.utils.table_to_book(table, { sheet: "Sheet1" });
+
+        // Define the row heights
+        var ws = wb.Sheets["Sheet1"];
+        var wsrows = [
+            { hpt: 55 }, { hpx: 55 }, { hpx: 55 }, { hpx: 55 },
+            { hpx: 55 }, { hpx: 55 }, { hpx: 55 }, { hpx: 55 },
+            { hpx: 55 }, { hpx: 55 }, { hpx: 55 }, { hpx: 55 },
+            { hpx: 55 }, { hpx: 55 }, { hpx: 55 }, { hpx: 55 },
+            { hpx: 55 }, { hpx: 55 }, { hpx: 55 }, { hpx: 55 },
+            { hpx: 55 }, { hpx: 55 }, { hpx: 55 }, { hpx: 55 },
+            { hpx: 55 }, { hpx: 55 }, { hpx: 55 }, { hpx: 55 },
+            { hpx: 55 }, { hpx: 55 }, { hpx: 55 }, { hpx: 55 },
+            { hpx: 55 }, { hpx: 55 }, { hpx: 55 }, { hpx: 55 },
+            { hpx: 55 }, { hpx: 55 }, { hpx: 55 }, { hpx: 55 },
+            { hpx: 55 }, { hpx: 55 }, { hpx: 55 }, { hpx: 55 },
+            { hpx: 55 }, { hpx: 55 }, { hpx: 55 }, { hpx: 55 },
+            { hpx: 55 }, { hpx: 55 }, { hpx: 55 }, { hpx: 55 },
+            { hpx: 55 }, { hpx: 55 }, { hpx: 55 }, { hpx: 55 },
+            { hpx: 55 }, { hpx: 55 }, { hpx: 55 }, { hpx: 55 },
+            { hpx: 55 }, { hpx: 55 }, { hpx: 55 }, { hpx: 55 },
+            { hpx: 55 }, { hpx: 55 }, { hpx: 55 }, { hpx: 55 },
+            { hpx: 55 }, { hpx: 55 }, { hpx: 55 }, { hpx: 55 },
+        ];
+        ws['!rows'] = wsrows;
+
+         // Define the column widths
+        var wscols = [
+            { wch: 10 },
+            {wch: 9 } ,  {wch: 9 } , {wch: 9 } , {wch: 9 } , {wch: 9 }, {wch: 9 }, {wch: 9 },
+            {wch: 9 } ,  {wch: 9 } , {wch: 9 } , {wch: 9 } , {wch: 9 }, {wch: 9 }, {wch: 9 },
+            {wch: 9 } ,  {wch: 9 } , {wch: 9 } , {wch: 9 } , {wch: 9 }, {wch: 9 }, {wch: 9 },
+
+        ];
+        ws['!cols'] = wscols;
+
+
+
+        // Write the workbook to a file
+        XLSX.writeFile(wb, "istabm.xlsx");
+    });
+});
+
+
 
 
   document.addEventListener('livewire:load', function () {

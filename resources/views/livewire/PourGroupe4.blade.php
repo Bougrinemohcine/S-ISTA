@@ -67,7 +67,7 @@
 
                               <span>  {{$FormateurName}}</span>
                                  <span>{{  $moduleValue }}</span>
-                          <span>  {{ $SalleValue . "\n" . $typeSalle }}</span>
+                          <span>  @if($SalleValue){{ $SalleValue }}@else SALLE @endif  {{ $SalleValue . "\n" . $typeSalle }}</span>
 
 
                               <span>  {{$SessionType}}</span>

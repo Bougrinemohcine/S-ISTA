@@ -20,6 +20,7 @@
                         <option value="{{ $Main_emploi->id }}">{{$Main_emploi->datestart  }} to {{$Main_emploi->dateend }}</option>
                     @endforeach
                 </select>
+
                 <select class="form-select"  wire:model="selectedType" wire:change="updateSelectedType($event.target.value)">
                     <option  disabled selected >Select type emploi</option>
                     <option value="Formateur" selected>Formateurs</option>
@@ -296,6 +297,7 @@
                         <th colspan="2">Matin </th>
                         <th colspan="2">A.midi </th>
                         @endfor
+
                     </tr>
                     <tr class="se-row">
                              @for ($i =0 ; $i<12 ; $i++ )
@@ -308,40 +310,40 @@
                     @php
                      $dayWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
                 @endphp
+
    {{-- FOR GROUPES  --}}
    @if($selectedType === 'Group')
    @foreach ($groups as $group)
    <tr>
        <td>{{$group->group_name}}</td>
-       @foreach ($dayWeek as $day)
-    @foreach (['MatinSE1', 'MatinSE2', 'AmidiSE3', 'AmidiSE4'] as $sessionType)
-        @php
-            $sessionFound = false;
-            $currentSission = null;
-        @endphp
+      
+@foreach ($dayWeek as $day)
+@foreach (['MatinSE1', 'MatinSE2', 'AmidiSE3', 'AmidiSE4'] as $sessionType)
+@php
+    $sessionFound = false ;
+    $currentSission = null;
+@endphp
 
         @foreach ($sissions as $sission)
             @if ($sission->day === $day && $sission->group_id === $group->id && $sission->day_part === substr($sessionType, 0, 5) && $sission->dure_sission === substr($sessionType, 5))
-                @php
-                    $sessionFound = true;
-                    $currentSission = $sission;
-                    break; // Exit the loop once the session is found
-                @endphp
+            @php
+            $sessionFound = true ;
+            $currentSission = $sission;
+            break;
+            @endphp
             @endif
         @endforeach
-
-        <td style="background-color: {{ $sessionFound ? 'rgba(12, 72, 166, 0.3);' : '' }}" id="{{ $day.$sessionType.$group->id }}">
-            @if ($sessionFound && $currentSission)
-                <span>{{ $currentSission->sission_type }}</span>
-                <span>{{ $currentSission->user_name }}</span>
-                <span>{{ preg_replace('/^\d+/', ' ', $currentSission->module_name) }}</span>
-                <span>{{ $currentSission->class_name ? $currentSission->class_name : 'SALLE' }}</span>
-                <span>{{ $currentSission->typeSalle }}</span>
-            @endif
-        </td>
-    @endforeach
+        <td class="Cases {{$day}}" style="background-color: {{ $sessionFound ? 'rgba(12, 72, 166, 0.3);' : '' }}" id="{{ $day.$sessionType.$group->id }}">
+         @if ($sessionFound && $currentSission)
+             <span>{{ $currentSission->sission_type }}</span>
+             <span>{{ $currentSission->user_name }}</span>
+             <span>{{ preg_replace('/^\d+/', ' ', $currentSission->module_name) }}</span>
+             <span>{{ $currentSission->class_name ? $currentSission->class_name : 'SALLE' }}</span>
+             <span>{{ $currentSission->typeSalle }}</span>
+         @endif
+     </td>
 @endforeach
-
+@endforeach
    </tr>
    @endforeach
        </div>
@@ -358,22 +360,16 @@
                 @foreach ($sissions as $sission)
                     @if ($sission->day === $day && $sission->user_id === $formateur->id && $sission->day_part === substr($sessionType, 0, 5) && $sission->dure_sission === substr($sessionType, 5))
                         @php
-            $details = $sission->sission_type . '<br>'
-             . ($sission->class_name ? $sission->class_name : 'SALLE') . '<br>'
-             . $sission->typeSalle . '<br>'
-             . $sission->group_name . '<br>'
-             . preg_replace('/^\d+/', '', $sission->module_name);
-
-    $uniqueDetails = [];
-    foreach (explode('<br>', $details) as $word) {
-        if (!in_array($word, $sessionWords)) {
-            $uniqueDetails[] = $word;
-            $sessionWords[] = $word;
-        }
-    }
-    echo implode('<br>', $uniqueDetails);
-@endphp
-
+                            $details = $sission->sission_type . '<br>' . $sission->class_name . '<br>'. $sission->typeSalle.'<br>'. $sission->group_name . '<br>' .preg_replace('/^\d+/', '', $sission->module_name) ;
+                            $uniqueDetails = [];
+                            foreach (explode('<br>', $details) as $word) {
+                                if (!in_array($word, $sessionWords)) {
+                                    $uniqueDetails[] = $word;
+                                    $sessionWords[] = $word;
+                                }
+                            }
+                            echo implode('<br>', $uniqueDetails);
+                        @endphp
                     @endif
                 @endforeach
             </td>
@@ -459,4 +455,6 @@
 
 
 </script>
+
+
 
