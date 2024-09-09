@@ -36,6 +36,8 @@
     <th colspan="4">Jeudi</th>
     <th colspan="4">Vendredi</th>
     <th colspan="4">Samedi</th>
+    <th style="width: 200px !important" colspan="1" rowspan="3">Masse Horaire</th>
+
 </tr>
 <tr>
 
@@ -104,7 +106,9 @@
         @foreach ($groups as $group)
         <tr>
             <td class="groupNamecases" style="height: 50px !important; overflow: hidden; " rowspan="{{ count($sessionData) }}">{{ $group->group_name }}</td>
-            
+                @php
+                    $totalSessions = 0
+                @endphp
             @foreach ($sessionData as $item)
                 <td style="height: 50px !important; overflow: hidden">{{ $item }}</td>
                 @php
@@ -130,17 +134,19 @@
                                     @elseif ($item === 'Module')
                                         {{ preg_replace('/^\d+/', '', $sission->module_name) }}
                                     @elseif ($item === 'Salle')
-                                            @if($sission->class_name)
-                                                {{ $sission->class_name }}
-                                            @else
-                                                SALLE
-                                            @endif
+                                    @if($sission->class_name)
+                                    {{ $sission->class_name }}
+                                 @else
+                                     SALLE
+                                 @endif 
                                     @elseif ($item === 'type Séance')
                                         {{ $sission->sission_type }}
                                     @endif
                                 </td>
                                 @php
                                     $sessionFound = true;
+                                    $totalSessions++;
+
                                     break; // Exit the loop once a session is found
                                 @endphp
                             @endif
@@ -150,7 +156,13 @@
                         @endif
                     @endforeach
                 @endforeach
-            </tr><tr>
+                <td class="groupNamecases" style="height: 50px !important; overflow: hidden; "  colspan="1" rowspan="{{count($sessionData)}}">
+                    @php
+                        $masseHoraire = $totalSessions * 2.5; // Each session = 2.5 hours
+                        echo $masseHoraire . ' h';
+                    @endphp
+                </td>
+            </tr>
         @endforeach
 
         @endforeach
