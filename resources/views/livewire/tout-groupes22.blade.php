@@ -104,6 +104,7 @@
         @foreach ($groups as $group)
         <tr>
             <td class="groupNamecases" style="height: 50px !important; overflow: hidden; " rowspan="{{ count($sessionData) }}">{{ $group->group_name }}</td>
+            
             @foreach ($sessionData as $item)
                 <td style="height: 50px !important; overflow: hidden">{{ $item }}</td>
                 @php
@@ -129,7 +130,11 @@
                                     @elseif ($item === 'Module')
                                         {{ preg_replace('/^\d+/', '', $sission->module_name) }}
                                     @elseif ($item === 'Salle')
-                                        {{ $sission->class_name  ."\n" . $sission->typeSalle}}
+                                            @if($sission->class_name)
+                                                {{ $sission->class_name }}
+                                            @else
+                                                SALLE
+                                            @endif
                                     @elseif ($item === 'type Séance')
                                         {{ $sission->sission_type }}
                                     @endif

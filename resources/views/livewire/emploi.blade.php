@@ -181,6 +181,7 @@
                     <th colspan="4">Jeudi</th>
                     <th colspan="4">Vendredi</th>
                     <th colspan="4">Samedi</th>
+                    <th style="width: 105px !important"  rowspan="3">Masse Horaire</th>
                 </tr>
                 <tr>
 
@@ -198,7 +199,6 @@
                   <th colspan="2">A.midi </th>
                 </tr>
                 <tr class="se-row">
-
                     <th>SE1</th>
                     <th>SE2</th>
                     <th>SE1</th>
@@ -234,6 +234,9 @@
                 @foreach ($groups as $group)
                 <tr>
                     <td style="width: 130px ;" class="groupNAmeCase">{{ $group->group_name }}</td>
+                    @php
+                        $totalSessions = 0
+                    @endphp
                     @foreach ($dayWeek as $day)
                         @foreach (['MatinSE1', 'MatinSE2', 'AmidiSE3', 'AmidiSE4'] as $sessionType)
                             @php
@@ -246,6 +249,7 @@
                                      $sission->dure_sission === substr($sessionType, 5))
                                     @php
                                         $foundSession = true;
+                                        $totalSessions++;
                                     @endphp
                                     <td wire:click="updateCaseStatus(false , true)"
                                         colspan="1" rowspan="1"
@@ -279,6 +283,12 @@
                             @endif
                         @endforeach
                     @endforeach
+                    <td>
+                        @php
+                            $masseHoraire = $totalSessions * 2.5; // Each session = 2.5 hours
+                            echo $masseHoraire . ' h';
+                        @endphp
+                    </td>
                 </tr>
 
                 @endforeach
