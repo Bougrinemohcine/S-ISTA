@@ -317,10 +317,6 @@
                                 </a>
                             </li>
 
-
-
-
-
                             <li><a href="{{ route('CreateEmploi') }}" class=" waves-effect"> <span
                                         data-toggle="tooltip" data-placement="right" title="tout les groupes"
                                         class="mdi mdi-lightbulb-group-outline"
