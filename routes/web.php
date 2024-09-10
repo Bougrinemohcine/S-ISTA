@@ -25,9 +25,10 @@ use App\Http\Controllers\stagiaireController;
     use App\Http\Controllers\ScheduleChaqueGroup;
     use App\Http\Controllers\adminProfileController;
     use App\Http\Controllers\EmploiStricture;
+    use App\Http\Controllers\Salles;
     use App\Models\group;
 
-
+    
     // use App\Http\Middleware\Authenticate;
     /*
     |--------------------------------------------------------------------------
@@ -116,6 +117,7 @@ use App\Http\Controllers\stagiaireController;
         Route::get('/toutlesEmploi', [Schedule::class, 'toutlesEmploi'])->name('toutlesEmploi');
         Route::get('/AllRequest', [Schedule::class, 'AllRequest'])->name('AllRequest');
         //end Schedule routes
+        Route::get('/SallesEmploi', [Salles::class, 'index'])->name('showSallesEmploi');
         Route::get('/add-class-rooms', [classRoomsController::class, 'index'])->name('add-class-rooms');
         Route::post('/insertClasses', [classRoomsController::class, 'insert'])->name('insertClasses');
         Route::post('/insert-class-type', [classRoomsController::class, 'insert_class_type'])->name('insert-class-type');

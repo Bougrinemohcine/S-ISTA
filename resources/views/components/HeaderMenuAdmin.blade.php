@@ -338,6 +338,11 @@
                                         style="font-weight: 400 ; font-size:25PX"
                                         class="mdi mdi-lightbulb-multiple-outline"></span></a></li>
 
+                            <li><a href="{{route('showSallesEmploi')}}" class="waves-effect"> <span
+                                            data-toggle="tooltip" data-placement="right" title="Salles"
+                                            style="font-weight: 400 ; font-size:25PX"
+                                            class="mdi mdi-home-lightbulb-outline"></span></a></li>
+
 
                             <li>
                                 <a href="{{ route('toutlesEmploi') }}" class=" waves-effect">
